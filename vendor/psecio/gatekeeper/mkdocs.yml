@@ -1,0 +1,16 @@
+site_name: Gatekeeper
+theme: readthedocs
+repo_url: http://github.com/psecio/gatekeeper
+site_url: http://gatekeeper-auth.readthedocs.org
+pages:
+- 'index.md'
+- 'installation-and-configuration.md'
+- 'working-with-objects.md'
+- 'authentication.md'
+- 'users.md'
+- 'permissions.md'
+- 'groups.md'
+- 'password-reset.md'
+- 'security-questions.md'
+- 'providers.md'
+- 'policies.md'
