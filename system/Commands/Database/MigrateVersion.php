@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,15 +27,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package	CodeIgniter
- * @author	CodeIgniter Dev Team
- * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	https://opensource.org/licenses/MIT	MIT License
- * @link	https://codeigniter.com
- * @since	Version 3.0.0
+ * @package      CodeIgniter
+ * @author       CodeIgniter Dev Team
+ * @copyright    2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
+ * @license      https://opensource.org/licenses/MIT	MIT License
+ * @link         https://codeigniter.com
+ * @since        Version 3.0.0
  * @filesource
  */
-
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use Config\Services;
@@ -47,53 +46,91 @@ use Config\Services;
  */
 class MigrateVersion extends BaseCommand
 {
-    protected $group = 'Database';
 
-    /**
-     * The Command's name
-     *
-     * @var string
-     */
-    protected $name = 'migrate:version';
+	/**
+	 * The group the command is lumped under
+	 * when listing commands.
+	 *
+	 * @var string
+	 */
+	protected $group = 'Database';
 
-    /**
-     * the Command's short description
-     *
-     * @var string
-     */
-    protected $description = 'Migrates the database up or down to get to the specified version.';
+	/**
+	 * The Command's name
+	 *
+	 * @var string
+	 */
+	protected $name = 'migrate:version';
 
-    /**
-     * Migrates the database up or down to get to the specified version.
-     */
-    public function run(array $params=[])
-    {
-        $runner = Services::migrations();
+	/**
+	 * the Command's short description
+	 *
+	 * @var string
+	 */
+	protected $description = 'Migrates the database up or down to get to the specified version.';
 
-        // Get the version number
-        $version = array_shift($params);
+	/**
+	 * the Command's usage
+	 *
+	 * @var string
+	 */
+	protected $usage = 'migrate:version [version_number] [Options]';
 
-        if (is_null($version))
-        {
-            $version = CLI::prompt(lang('Migrations.version'));
-        }
+	/**
+	 * the Command's Arguments
+	 *
+	 * @var array
+	 */
+	protected $arguments = [
+		'version_number' => 'The version number to migrate',
+	];
 
-        if (is_null($version))
-        {
-            CLI::error(lang('Migrations.invalidVersion'));
-            exit();
-        }
+	/**
+	 * the Command's Options
+	 *
+	 * @var array
+	 */
+	protected $options = [
+		'-n' => 'Set migration namespace',
+		'-g' => 'Set database group',
+	];
 
-        CLI::write(sprintf(lang('Migrations.migToVersionPH'), $version), 'yellow');
+	/**
+	 * Migrates the database up or down to get to the specified version.
+	 *
+	 * @param array $params
+	 */
+	public function run(array $params = [])
+	{
+		$runner = Services::migrations();
 
-        try {
-            $runner->version($version);
-        }
-        catch (\Exception $e)
-        {
-            $this->showError($e);
-        }
+		// Get the version number
+		$version = array_shift($params);
 
-        CLI::write('Done');
-    }
+		if (is_null($version))
+		{
+			$version = CLI::prompt(lang('Migrations.version'));
+		}
+
+		if (is_null($version))
+		{
+			CLI::error(lang('Migrations.invalidVersion'));
+			exit();
+		}
+
+		CLI::write(sprintf(lang('Migrations.migToVersionPH'), $version), 'yellow');
+
+		$namespace = CLI::getOption('n');
+		$group = CLI::getOption('g');
+		try
+		{
+			$runner->version($version, $namespace, $group);
+		} catch (\Exception $e)
+		{
+			$this->showError($e);
+		}
+
+		CLI::write('Done');
+	}
+
 }

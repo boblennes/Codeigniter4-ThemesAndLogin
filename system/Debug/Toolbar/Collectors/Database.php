@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,21 +29,20 @@
  *
  * @package      CodeIgniter
  * @author       CodeIgniter Dev Team
- * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
  * @license      https://opensource.org/licenses/MIT	MIT License
  * @link         https://codeigniter.com
  * @since        Version 4.0.0
  * @filesource
  */
-
 use CodeIgniter\Database\Query;
-use CodeIgniter\Services;
 
 /**
  * Collector for the Database tab of the Debug Toolbar.
  */
 class Database extends BaseCollector
 {
+
 	/**
 	 * Whether this collector has timeline data.
 	 *
@@ -79,14 +78,13 @@ class Database extends BaseCollector
 	 */
 	protected $connections;
 
-    /**
-     * The query instances that have been collected
-     * through the DBQuery Hook.
-     *
-     * @var array
-     */
-    protected static $queries = [];
-
+	/**
+	 * The query instances that have been collected
+	 * through the DBQuery Event.
+	 *
+	 * @var array
+	 */
+	protected static $queries = [];
 
 	//--------------------------------------------------------------------
 
@@ -100,20 +98,20 @@ class Database extends BaseCollector
 
 	//--------------------------------------------------------------------
 
-    /**
-     * The static method used during Hooks to collect
-     * data.
-     *
-     * @param \CodeIgniter\Database\Query $query
-     *
-     * @internal param $ array \CodeIgniter\Database\Query
-     */
-    public static function collect(Query $query)
-    {
-        static::$queries[] = $query;
-    }
+	/**
+	 * The static method used during Events to collect
+	 * data.
+	 *
+	 * @param \CodeIgniter\Database\Query $query
+	 *
+	 * @internal param $ array \CodeIgniter\Database\Query
+	 */
+	public static function collect(Query $query)
+	{
+		static::$queries[] = $query;
+	}
 
-    //--------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
 	/**
 	 * Returns timeline data formatted for the toolbar.
@@ -128,22 +126,22 @@ class Database extends BaseCollector
 		{
 			// Connection Time
 			$data[] = [
-				'name' => 'Connecting to Database: "'.$alias.'"',
-				'component' => 'Database',
-				'start' => $connection->getConnectStart(),
-				'duration' => $connection->getConnectDuration()
+				'name'		 => 'Connecting to Database: "' . $alias . '"',
+				'component'	 => 'Database',
+				'start'		 => $connection->getConnectStart(),
+				'duration'	 => $connection->getConnectDuration()
 			];
 		}
 
-        foreach (static::$queries as $query)
-        {
-            $data[] = [
-                'name' => 'Query',
-                'component' => 'Database',
-                'start' => $query->getStartTime(true),
-                'duration' => $query->getDuration()
-            ];
-        }
+		foreach (static::$queries as $query)
+		{
+			$data[] = [
+				'name'		 => 'Query',
+				'component'	 => 'Database',
+				'start'		 => $query->getStartTime(true),
+				'duration'	 => $query->getDuration()
+			];
+		}
 
 		return $data;
 	}
@@ -157,35 +155,35 @@ class Database extends BaseCollector
 	 */
 	public function display(): string
 	{
-        // Key words we want bolded
-        $highlight = ['SELECT', 'DISTINCT', 'FROM', 'WHERE', 'AND', 'LEFT&nbsp;JOIN', 'ORDER&nbsp;BY', 'GROUP&nbsp;BY',
-            'LIMIT', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'OR&nbsp;', 'HAVING', 'OFFSET', 'NOT&nbsp;IN',
-            'IN', 'LIKE', 'NOT&nbsp;LIKE', 'COUNT', 'MAX', 'MIN', 'ON', 'AS', 'AVG', 'SUM', '(', ')'
-        ];
+		// Key words we want bolded
+		$highlight = ['SELECT', 'DISTINCT', 'FROM', 'WHERE', 'AND', 'LEFT&nbsp;JOIN', 'ORDER&nbsp;BY', 'GROUP&nbsp;BY',
+			'LIMIT', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'OR&nbsp;', 'HAVING', 'OFFSET', 'NOT&nbsp;IN',
+			'IN', 'LIKE', 'NOT&nbsp;LIKE', 'COUNT', 'MAX', 'MIN', 'ON', 'AS', 'AVG', 'SUM', '(', ')'
+		];
 
-		$parser = \Config\Services::parser(BASEPATH.'Debug/Toolbar/Views/');
+		$parser = \Config\Services::parser(BASEPATH . 'Debug/Toolbar/Views/');
 
 		$data = [
-		    'queries' => []
-        ];
+			'queries' => []
+		];
 
 		foreach (static::$queries as $query)
-        {
-            $sql = $query->getQuery();
+		{
+			$sql = $query->getQuery();
 
-            foreach ($highlight as $term)
-            {
-                $sql = str_replace($term, "<strong>{$term}</strong>", $sql);
-            }
+			foreach ($highlight as $term)
+			{
+				$sql = str_replace($term, "<strong>{$term}</strong>", $sql);
+			}
 
-            $data['queries'][] = [
-                'duration' => $query->getDuration(5) * 1000,
-                'sql' => $sql
-            ];
-        }
+			$data['queries'][] = [
+				'duration'	 => $query->getDuration(5) * 1000,
+				'sql'		 => $sql
+			];
+		}
 
 		$output = $parser->setData($data)
-                         ->render('_database.tpl');
+				->render('_database.tpl');
 
 		return $output;
 	}
@@ -199,10 +197,9 @@ class Database extends BaseCollector
 	 */
 	public function getTitleDetails(): string
 	{
-		return '('.count(static::$queries).' Queries across '.count($this->connections).' Connection'.
-		       (count($this->connections) > 1 ? 's' : '').')';
+		return '(' . count(static::$queries) . ' Queries across ' . count($this->connections) . ' Connection' .
+				(count($this->connections) > 1 ? 's' : '') . ')';
 	}
 
 	//--------------------------------------------------------------------
-
 }

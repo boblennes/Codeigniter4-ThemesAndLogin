@@ -1,7 +1,10 @@
 <?php namespace App\Controllers;
 
 use CodeIgniter\API\ResponseTrait;
+use CodeIgniter\Config\Services;
 use CodeIgniter\Controller;
+use CodeIgniter\I18n\Time;
+use CodeIgniter\Model;
 use Config\Database;
 
 class Checks extends Controller
@@ -107,6 +110,181 @@ class Checks extends Controller
 	{
 		echo '<pre>';
 		var_dump($this->response->getHeaderLine('content-type'));
+	}
+
+	public function model()
+	{
+	    $model = new class() extends Model {
+	        protected $table = 'job';
+        };
+
+	    $results = $model->findAll();
+
+	    $developer = $model->findWhere('name', 'Developer');
+
+	    $politician = $model->find(3);
+
+	}
+
+    public function curl()
+    {
+        $client = Services::curlrequest([
+            'debug' => true,
+            'follow_redirects' => true,
+            'json' => ['foo' => 'bar']
+        ]);
+
+        echo '<pre>';
+        $response = $client->request('PUT', 'http://ci4.dev/checks/catch');
+        echo $response->getBody();
+    }
+
+    // Simply echos back what's given in the body.
+    public function catch()
+    {
+        $body = print_r($this->request->getRawInput(), true);
+        echo $body;
+    }
+
+	public function redirect()
+	{
+		redirect('/checks/model');
+    }
+
+	public function image()
+	{
+		$info = Services::image('imagick')
+			->withFile("/Users/kilishan/Documents/BobHeader.jpg")
+			->getFile()
+			->getProperties(true);
+
+		dd(ENVIRONMENT);
+
+		$images = Services::image('imagick')
+			->getVersion();
+//			->withFile("/Users/kilishan/Documents/BobHeader.jpg")
+//			->resize(500, 100, true)
+//			->crop(200, 75, 20, 0, false)
+//			->rotate(90)
+//			->save('/Users/kilishan/temp.jpg');
+
+//		$images = Services::image('imagick')
+//			->withFile("/Users/kilishan/Documents/BobHeader.jpg")
+//			->fit(500, 100, 'bottom-left')
+//			->text('Bob is Back!', [
+//				'fontPath'  => '/Users/kilishan/Downloads/Calibri.ttf',
+//				'fontSize' => 40,
+//				'padding' => 0,
+//				'opacity'   => 0.5,
+//				'vAlign'    => 'top',
+//				'hAlign'    => 'right',
+//				'withShadow' => true,
+//			])
+//			->save('/Users/kilishan/temp.jpg', 100);
+
+
+		ddd($images);
+	}
+
+	public function time()
+	{
+		$time = new Time();
+
+		echo($time);
+		echo '<br/>';
+		echo Time::now();
+		echo '<br/>';
+		echo Time::parse('First Monday of December');
+		echo '<br/>';
+
+		$time = new Time('Next Monday');
+		die($time);
+	}
+
+	public function csp()
+	{
+//		$this->response->CSP->reportOnly(true);
+		$this->response->CSP->setDefaultSrc(base_url());
+		$this->response->CSP->addStyleSrc('unsafe-inline');
+		$this->response->CSP->addStyleSrc('https://maxcdn.bootstrapcdn.com');
+
+		echo <<<EOF
+<!doctype html>
+<html>
+<head>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+<style {csp-style-nonce}>
+	body { background: #efefef; }
+</style>
+
+</body>
+</html>
+EOF;
+
+	}
+
+	public function upload()
+	{
+		if  ($this->request->getMethod() == 'post')
+		{
+			$this->validate([
+				'avatar' => 'uploaded[avatar]|ext_in[avatar,png,jpg,jpeg,gif]'
+			]);
+
+			/**
+			 * @var \CodeIgniter\HTTP\Files\UploadedFile
+			 */
+			$file = $this->request->getFile('avatar');
+
+			echo "Name: {$file->getName()}<br/>";
+			echo "Temp Name: {$file->getTempName()}<br/>";
+			echo "Original Name: {$file->getClientName()}<br/>";
+			echo "Random Name: {$file->getRandomName()}<br/>";
+			echo "Extension: {$file->getExtension()}<br/>";
+			echo "Client Extension: {$file->getClientExtension()}<br/>";
+			echo "Guessed Extension: {$file->guessExtension()}<br/>";
+			echo "MimeType: {$file->getMimeType()}<br/>";
+			echo "IsValid: {$file->isValid()}<br/>";
+			echo "Size (b): {$file->getSize()}<br/>";
+			echo "Size (kb): {$file->getSize('kb')}<br/>";
+			echo "Size (mb): {$file->getSize('mb')}<br/>";
+			echo "Size (mb): {$file->getSize('mb')}<br/>";
+			echo "Path: {$file->getPath()}<br/>";
+			echo "RealPath: {$file->getRealPath()}<br/>";
+			echo "Filename: {$file->getFilename()}<br/>";
+			echo "Basename: {$file->getBasename()}<br/>";
+			echo "Pathname: {$file->getPathname()}<br/>";
+			echo "Permissions: {$file->getPerms()}<br/>";
+			echo "Inode: {$file->getInode()}<br/>";
+			echo "Owner: {$file->getOwner()}<br/>";
+			echo "Group: {$file->getGroup()}<br/>";
+			echo "ATime: {$file->getATime()}<br/>";
+			echo "MTime: {$file->getMTime()}<br/>";
+			echo "CTime: {$file->getCTime()}<br/>";
+
+			dd($file);
+		}
+
+		echo <<<EOF
+<!doctype html>
+<html>
+<body>
+
+<form action="" method="post" enctype="multipart/form-data">
+
+	<input type="file" name="avatar">
+
+	<input type="submit" value="Upload">
+	
+</form>
+
+</body>
+</html>
+
+EOF;
+;
 	}
 
 

@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,62 +29,98 @@
  *
  * @package	CodeIgniter
  * @author	CodeIgniter Dev Team
- * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
  * @filesource
  */
-
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use Config\App;
 
 class CreateMigration extends BaseCommand
 {
-    protected $group = 'CodeIgniter';
 
-    /**
-     * The Command's name
-     *
-     * @var string
-     */
-    protected $name = 'session:migration';
+	/**
+	 * The group the command is lumped under
+	 * when listing commands.
+	 *
+	 * @var string
+	 */
+	protected $group = 'CodeIgniter';
 
-    /**
-     * the Command's short description
-     *
-     * @var string
-     */
-    protected $description = 'Generates the migration file for database sessions.';
+	/**
+	 * The Command's name
+	 *
+	 * @var string
+	 */
+	protected $name = 'session:migration';
 
-    /**
-     * Creates a new migration file with the current timestamp.
-     */
-    public function run(array $params=[])
-    {
-        $name = 'create_sessions_table';
+	/**
+	 * the Command's short description
+	 *
+	 * @var string
+	 */
+	protected $description = 'Generates the migration file for database sessions.';
 
-        $path = APPPATH.'Database/Migrations/'.date('YmdHis_').$name.'.php';
+	/**
+	 * the Command's usage
+	 *
+	 * @var string
+	 */
+	protected $usage = 'session:migration';
 
-        $config = new App();
+	/**
+	 * the Command's Arguments
+	 *
+	 * @var array
+	 */
+	protected $arguments = array();
 
-        $data = [
-            'matchIP'   => $config->sessionMatchIP  ?? false,
-            'tableName' => $config->sessionSavePath ?? 'ci_sessions',
-        ];
+	/**
+	 * the Command's Options
+	 *
+	 * @var array
+	 */
+	protected $options = array(
+		'-n' => 'Set migration namespace',
+		'-g' => 'Set database group',
+		'-t' => 'Set table name',
+	);
 
-        $template = view('\CodeIgniter\Commands\Sessions\Views\migration.tpl', $data);
-        $template = str_replace('@php', '<?php', $template);
+	/**
+	 * Creates a new migration file with the current timestamp.
+	 *
+	 * @param array $params
+	 */
+	public function run(array $params = [])
+	{
+		$config = new App();
 
-        // Write the file out.
-        helper('filesystem');
-        if (! write_file($path, $template))
-        {
-            CLI::error(lang('Migrations.migWriteError'));
-            return;
-        }
+		$tableName = CLI::getOption('t') ?? $config->sessionSavePath ?? 'ci_sessions';
 
-        CLI::write('Created file: '. CLI::color(str_replace(APPPATH, 'APPPATH/', $path), 'green'));
-    }
+		$path = APPPATH . 'Database/Migrations/' . date('YmdHis_') . 'create_' . $tableName . '_table' . '.php';
+
+		$data = [
+			'namespace'	 => CLI::getOption('n') ?? APP_NAMESPACE ?? 'App',
+			'DBGroup'	 => CLI::getOption('g'),
+			'tableName'	 => $tableName,
+			'matchIP'	 => $config->sessionMatchIP ?? false,
+		];
+
+		$template = view('\CodeIgniter\Commands\Sessions\Views\migration.tpl', $data);
+		$template = str_replace('@php', '<?php', $template);
+
+		// Write the file out.
+		helper('filesystem');
+		if ( ! write_file($path, $template))
+		{
+			CLI::error(lang('Migrations.migWriteError'));
+			return;
+		}
+
+		CLI::write('Created file: ' . CLI::color(str_replace(APPPATH, 'APPPATH/', $path), 'green'));
+	}
+
 }

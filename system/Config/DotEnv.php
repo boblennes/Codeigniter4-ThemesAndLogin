@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  *
  * @package      CodeIgniter
  * @author       CodeIgniter Dev Team
- * @copyright    Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright    2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
  * @license      https://opensource.org/licenses/MIT	MIT License
  * @link         https://codeigniter.com
  * @since        Version 3.0.0
@@ -39,9 +39,9 @@
 /**
  * Environment-specific configuration
  */
-
 class DotEnv
 {
+
 	/**
 	 * The directory where the .env file can be located.
 	 *
@@ -64,7 +64,7 @@ class DotEnv
 			$file = '.env';
 		}
 
-		$this->path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$file;
+		$this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file;
 	}
 
 	//--------------------------------------------------------------------
@@ -73,6 +73,8 @@ class DotEnv
 	 * The main entry point, will load the .env file and process it
 	 * so that we end up with all settings in the PHP environment vars
 	 * (i.e. getenv(), $_ENV, and $_SERVER)
+	 *
+	 * @return bool
 	 */
 	public function load()
 	{
@@ -122,9 +124,12 @@ class DotEnv
 	{
 		list($name, $value) = $this->normaliseVariable($name, $value);
 
-		putenv("$name=$value");
-		$_ENV[$name] = $value;
-		$_SERVER[$name] = $value;
+		if ( ! getenv($name, true))
+			putenv("$name=$value");
+		if (empty($_ENV[$name]))
+			$_ENV[$name] = $value;
+		if (empty($_SERVER[$name]))
+			$_SERVER[$name] = $value;
 	}
 
 	//--------------------------------------------------------------------
@@ -135,6 +140,7 @@ class DotEnv
 	 *
 	 * @param string $name
 	 * @param string $value
+	 *
 	 * @return array
 	 */
 	public function normaliseVariable(string $name, string $value = ''): array
@@ -145,7 +151,7 @@ class DotEnv
 			list($name, $value) = explode('=', $name, 2);
 		}
 
-		$name  = trim($name);
+		$name = trim($name);
 		$value = trim($value);
 
 		// Sanitize the name
@@ -183,25 +189,24 @@ class DotEnv
 		if (strpbrk($value[0], '"\'') !== false)
 		{
 			// value starts with a quote
-			$quote        = $value[0];
+			$quote = $value[0];
 			$regexPattern = sprintf(
-				'/^
-                %1$s          # match a quote at the start of the value
-                (             # capturing sub-pattern used
-                 (?:          # we do not need to capture this
-                  [^%1$s\\\\] # any character other than a quote or backslash
-                  |\\\\\\\\   # or two backslashes together
-                  |\\\\%1$s   # or an escaped quote e.g \"
-                 )*           # as many characters that match the previous rules
-                )             # end of the capturing sub-pattern
-                %1$s          # and the closing quote
-                .*$           # and discard any string after the closing quote
-                /mx',
-				$quote
+					'/^
+					%1$s          # match a quote at the start of the value
+					(             # capturing sub-pattern used
+								  (?:          # we do not need to capture this
+								   [^%1$s\\\\] # any character other than a quote or backslash
+								   |\\\\\\\\   # or two backslashes together
+								   |\\\\%1$s   # or an escaped quote e.g \"
+								  )*           # as many characters that match the previous rules
+					)             # end of the capturing sub-pattern
+					%1$s          # and the closing quote
+					.*$           # and discard any string after the closing quote
+					/mx', $quote
 			);
-			$value        = preg_replace($regexPattern, '$1', $value);
-			$value        = str_replace("\\$quote", $quote, $value);
-			$value        = str_replace('\\\\', '\\', $value);
+			$value = preg_replace($regexPattern, '$1', $value);
+			$value = str_replace("\\$quote", $quote, $value);
+			$value = str_replace('\\\\', '\\', $value);
 		}
 		else
 		{
@@ -241,21 +246,18 @@ class DotEnv
 			$loader = $this;
 
 			$value = preg_replace_callback(
-				'/\${([a-zA-Z0-9_]+)}/',
-				function ($matchedPatterns) use ($loader)
-				{
-					$nestedVariable = $loader->getVariable($matchedPatterns[1]);
+					'/\${([a-zA-Z0-9_]+)}/', function ($matchedPatterns) use ($loader) {
+				$nestedVariable = $loader->getVariable($matchedPatterns[1]);
 
-					if (is_null($nestedVariable))
-					{
-						return $matchedPatterns[0];
-					}
-					else
-					{
-						return $nestedVariable;
-					}
-				},
-				$value
+				if (is_null($nestedVariable))
+				{
+					return $matchedPatterns[0];
+				}
+				else
+				{
+					return $nestedVariable;
+				}
+			}, $value
 			);
 		}
 
@@ -293,5 +295,4 @@ class DotEnv
 	}
 
 	//--------------------------------------------------------------------
-
 }

@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,15 +27,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @package	CodeIgniter
- * @author	CodeIgniter Dev Team
- * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	https://opensource.org/licenses/MIT	MIT License
- * @link	https://codeigniter.com
- * @since	Version 3.0.0
+ * @package      CodeIgniter
+ * @author       CodeIgniter Dev Team
+ * @copyright    2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
+ * @license      https://opensource.org/licenses/MIT	MIT License
+ * @link         https://codeigniter.com
+ * @since        Version 3.0.0
  * @filesource
  */
-
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use Config\Services;
@@ -47,39 +46,88 @@ use Config\Services;
  */
 class MigrateLatest extends BaseCommand
 {
-    protected $group = 'Database';
+	/**
+	 * The group the command is lumped under
+	 * when listing commands.
+	 *
+	 * @var string
+	 */
+	protected $group = 'Database';
 
-    /**
-     * The Command's name
-     *
-     * @var string
-     */
-    protected $name = 'migrate';
+	/**
+	 * The Command's name
+	 *
+	 * @var string
+	 */
+	protected $name = 'migrate:latest';
 
-    /**
-     * the Command's short description
-     *
-     * @var string
-     */
-    protected $description = 'Migrates the database to the latest schema.';
+	/**
+	 * the Command's short description
+	 *
+	 * @var string
+	 */
+	protected $description = 'Migrates the database to the latest schema.';
 
-    /**
-     * Ensures that all migrations have been run.
-     */
-    public function run(array $params=[])
-    {
-        $runner = Services::migrations();
+	/**
+	 * the Command's usage
+	 *
+	 * @var string
+	 */
+	protected $usage = 'migrate:latest [options]';
 
-        CLI::write(lang('Migrations.migToLatest'), 'yellow');
+	/**
+	 * the Command's Arguments
+	 *
+	 * @var array
+	 */
+	protected $arguments = [];
 
-        try {
-            $runner->latest();
-        }
-        catch (\Exception $e)
-        {
-            $this->showError($e);
-        }
+	/**
+	 * the Command's Options
+	 *
+	 * @var array
+	 */
+	protected $options = [
+		'-n'	 => 'Set migration namespace',
+		'-g'	 => 'Set database group',
+		'-all'	 => 'Set latest for all namespace, will ignore (-n) option',
+	];
 
-        CLI::write('Done');
-    }
+	/**
+	 * Ensures that all migrations have been run.
+	 *
+	 * @param array $params
+	 */
+	public function run(array $params = [])
+	{
+		$runner = Services::migrations();
+
+		CLI::write(lang('Migrations.migToLatest'), 'yellow');
+
+		$namespace = CLI::getOption('n');
+		$group = CLI::getOption('g');
+
+		try
+		{
+			if ( ! is_null(CLI::getOption('all')))
+			{
+				$runner->latestAll($group);
+			}
+			else
+			{
+				$runner->latest($namespace, $group);
+			}
+			$messages = $runner->getCliMessages();
+			foreach ($messages as $message)
+			{
+				CLI::write($message);
+			}
+		} catch (\Exception $e)
+		{
+			$this->showError($e);
+		}
+
+		CLI::write('Done');
+	}
+
 }

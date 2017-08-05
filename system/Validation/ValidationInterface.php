@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,17 +29,17 @@
  *
  * @package	CodeIgniter
  * @author	CodeIgniter Dev Team
- * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
  * @filesource
  */
-
 use CodeIgniter\HTTP\RequestInterface;
 
 interface ValidationInterface
 {
+
 	/**
 	 * Runs the validation process, returning true/false determing whether
 	 * or not validation was successful.
@@ -54,12 +54,26 @@ interface ValidationInterface
 	//--------------------------------------------------------------------
 
 	/**
+	 * Check; runs the validation process, returning true or false
+	 * determining whether or not validation was successful.
+	 *
+	 * @param mixed    $value  Value to validation.
+	 * @param string   $rule   Rule.
+	 * @param string[] $errors Errors.
+	 *
+	 * @return bool True if valid, else false.
+	 */
+	public function check($value, string $rule, array $errors = []): bool;
+
+	//--------------------------------------------------------------------
+
+	/**
 	 * Takes a Request object and grabs the data to use from its
 	 * POST array values.
 	 *
 	 * @param \CodeIgniter\HTTP\RequestInterface $request
 	 *
-	 * @return \CodeIgniter\Validation\Validation
+	 * @return \CodeIgniter\Validation\ValidationInterface
 	 */
 	public function withRequest(RequestInterface $request): ValidationInterface;
 
@@ -88,7 +102,6 @@ interface ValidationInterface
 	public function hasRule(string $field): bool;
 
 	//--------------------------------------------------------------------
-
 	//--------------------------------------------------------------------
 	// Errors
 	//--------------------------------------------------------------------
@@ -125,7 +138,7 @@ interface ValidationInterface
 	 * @param string $alias
 	 * @param string $error
 	 *
-	 * @return \CodeIgniter\Validation\Validation
+	 * @return \CodeIgniter\Validation\ValidationInterface
 	 */
 	public function setError(string $alias, string $error): ValidationInterface;
 

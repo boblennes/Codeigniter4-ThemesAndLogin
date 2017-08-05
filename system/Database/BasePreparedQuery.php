@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,21 +29,21 @@
  *
  * @package	CodeIgniter
  * @author	CodeIgniter Dev Team
- * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
  * @filesource
  */
-
-use CodeIgniter\Hooks\Hooks;
+use CodeIgniter\Events\Events;
 
 abstract class BasePreparedQuery implements PreparedQueryInterface
 {
+
 	/**
 	 * The prepared statement itself.
 	 *
-	 * @var
+	 * @var resource|\mysqli_stmt
 	 */
 	protected $statement;
 
@@ -72,7 +72,7 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
 	/**
 	 * A reference to the db connection to use.
 	 *
-	 * @var \CodeIgniter\Database\ConnectionInterface
+	 * @var BaseConnection|MySQLi\Connection
 	 */
 	protected $db;
 
@@ -80,7 +80,7 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
 
 	public function __construct(ConnectionInterface $db)
 	{
-		$this->db =& $db;
+		$this->db = & $db;
 	}
 
 	//--------------------------------------------------------------------
@@ -93,7 +93,8 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
 	 * override this method.
 	 *
 	 * @param string $sql
-	 * @param array  $options  Passed to the connection's prepare statement.
+	 * @param array  $options Passed to the connection's prepare statement.
+	 * @param string $queryClass
 	 *
 	 * @return mixed
 	 */
@@ -104,11 +105,14 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
 		// need to replace our named placeholders (:name)
 		$sql = preg_replace('/:[^\s,)]+/', '?', $sql);
 
+		/**
+		 * @var \CodeIgniter\Database\Query $query
+		 */
 		$query = new $queryClass($this->db);
 
 		$query->setQuery($sql);
 
-		if (! empty($this->db->swapPre) && ! empty($this->db->DBPrefix))
+		if ( ! empty($this->db->swapPre) && ! empty($this->db->DBPrefix))
 		{
 			$query->swapPrefix($this->db->DBPrefix, $this->db->swapPre);
 		}
@@ -154,7 +158,7 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
 		$query->setDuration($startTime);
 
 		// Let others do something with this query
-        Hooks::trigger('DBQuery', $query);
+		Events::trigger('DBQuery', $query);
 
 		// Return a result object
 		$resultClass = str_replace('PreparedQuery', 'Result', get_class($this));
@@ -191,12 +195,12 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
 	 */
 	public function close()
 	{
-		if (! is_object($this->statement))
+		if ( ! is_object($this->statement))
 		{
 			return;
 		}
 
-	    $this->statement->close();
+		$this->statement->close();
 	}
 
 	//--------------------------------------------------------------------
@@ -208,10 +212,10 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
 	 */
 	public function getQueryString(): string
 	{
-	    if (! $this->query instanceof QueryInterface)
-        {
-            throw new \BadMethodCallException('Cannot call getQueryString on a prepared query until after the query has been prepared.');
-        }
+		if ( ! $this->query instanceof QueryInterface)
+		{
+			throw new \BadMethodCallException('Cannot call getQueryString on a prepared query until after the query has been prepared.');
+		}
 
 		return $this->query->getQuery();
 	}
@@ -225,16 +229,15 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
 	 */
 	public function hasError()
 	{
-	    return ! empty($this->errorString);
+		return ! empty($this->errorString);
 	}
 
 	//--------------------------------------------------------------------
 
-
 	/**
 	 * Returns the error code created while executing this statement.
 	 *
-	 * @return string
+	 * @return int
 	 */
 	public function getErrorCode(): int
 	{

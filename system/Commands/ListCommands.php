@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,13 +29,12 @@
  *
  * @package	CodeIgniter
  * @author	CodeIgniter Dev Team
- * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
  * @filesource
  */
-
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 
@@ -49,127 +48,155 @@ use CodeIgniter\CLI\CLI;
  */
 class ListCommands extends BaseCommand
 {
-    protected $group = 'CodeIgniter';
 
-    /**
-     * The Command's name
-     *
-     * @var string
-     */
-    protected $name = 'list';
+	/**
+	 * The group the command is lumped under
+	 * when listing commands.
+	 *
+	 * @var string
+	 */
+	protected $group = 'CodeIgniter';
 
-    /**
-     * the Command's short description
-     *
-     * @var string
-     */
-    protected $description = 'Lists the available commands.';
+	/**
+	 * The Command's name
+	 *
+	 * @var string
+	 */
+	protected $name = 'list';
 
-    /**
-     * The length of the longest command name.
-     * Used during display in columns.
-     *
-     * @var int
-     */
-    protected $maxFirstLength = 0;
+	/**
+	 * the Command's short description
+	 *
+	 * @var string
+	 */
+	protected $description = 'Lists the available commands.';
 
-    //--------------------------------------------------------------------
+	/**
+	 * the Command's usage
+	 *
+	 * @var string
+	 */
+	protected $usage = 'list';
 
-    /**
-     * Displays the help for the ci.php cli script itself.
-     *
-     * @param array $params
-     */
-    public function run(array $params)
-    {
-        $commands = $this->commands->getCommands();
+	/**
+	 * the Command's Arguments
+	 *
+	 * @var array
+	 */
+	protected $arguments = array();
 
-        $this->describeCommands($commands);
+	/**
+	 * the Command's Options
+	 *
+	 * @var array
+	 */
+	protected $options = array();
 
-        CLI::newLine();
-    }
+	/**
+	 * The length of the longest command name.
+	 * Used during display in columns.
+	 *
+	 * @var int
+	 */
+	protected $maxFirstLength = 0;
 
-    //--------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
-    /**
-     * Displays the commands on the CLI.
-     *
-     * @param array $commands
-     */
-    protected function describeCommands(array $commands = [])
-    {
-        arsort($commands);
+	/**
+	 * Displays the help for the ci.php cli script itself.
+	 *
+	 * @param array $params
+	 */
+	public function run(array $params)
+	{
+		$commands = $this->commands->getCommands();
 
-        $names     = array_keys($commands);
-        $descs     = array_column($commands, 'description');
-        $groups    = array_column($commands, 'group');
-        $lastGroup = '';
+		$this->describeCommands($commands);
 
-        // Pad each item to the same length
-        $names = $this->padArray($names, 2, 2);
+		CLI::newLine();
+	}
 
-        for ($i = 0; $i < count($names); $i++)
-        {
-            $lastGroup = $this->describeGroup($groups[$i], $lastGroup);
+	//--------------------------------------------------------------------
 
-            $out = CLI::color($names[$i], 'yellow');
+	/**
+	 * Displays the commands on the CLI.
+	 *
+	 * @param array $commands
+	 */
+	protected function describeCommands(array $commands = [])
+	{
+		arsort($commands);
 
-            if (isset($descs[$i]))
-            {
-                $out .= CLI::wrap($descs[$i], 125, strlen($names[$i]));
-            }
+		$names = array_keys($commands);
+		$descs = array_column($commands, 'description');
+		$groups = array_column($commands, 'group');
+		$lastGroup = '';
 
-            CLI::write($out);
-        }
-    }
+		// Pad each item to the same length
+		$names = $this->padArray($names, 2, 2);
 
-    //--------------------------------------------------------------------
+		for ($i = 0; $i < count($names); $i ++ )
+		{
+			$lastGroup = $this->describeGroup($groups[$i], $lastGroup);
 
-    /**
-     * Outputs the description, if necessary.
-     *
-     * @param string $new
-     * @param string $old
-     *
-     * @return string
-     */
-    protected function describeGroup(string $new, string $old)
-    {
-        if ($new == $old)
-        {
-            return $old;
-        }
+			$out = CLI::color($names[$i], 'yellow');
 
-        CLI::newLine();
-        CLI::write($new);
+			if (isset($descs[$i]))
+			{
+				$out .= CLI::wrap($descs[$i], 125, strlen($names[$i]));
+			}
 
-        return $new;
-    }
+			CLI::write($out);
+		}
+	}
 
-    //--------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
-    /**
-     * Returns a new array where all of the string elements have
-     * been padding with trailing spaces to be the same length.
-     *
-     * @param array $array
-     * @param int   $extra // How many extra spaces to add at the end
-     *
-     * @return array
-     */
-    protected function padArray($array, $extra = 2, $indent=0)
-    {
-        $max = max(array_map('strlen', $array))+$extra+$indent;
+	/**
+	 * Outputs the description, if necessary.
+	 *
+	 * @param string $new
+	 * @param string $old
+	 *
+	 * @return string
+	 */
+	protected function describeGroup(string $new, string $old)
+	{
+		if ($new == $old)
+		{
+			return $old;
+		}
 
-        foreach ($array as &$item)
-        {
-            $item = str_repeat(' ', $indent).$item;
-            $item = str_pad($item, $max);
-        }
+		CLI::newLine();
+		CLI::write($new);
 
-        return $array;
-    }
+		return $new;
+	}
 
-    //--------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
+	/**
+	 * Returns a new array where all of the string elements have
+	 * been padding with trailing spaces to be the same length.
+	 *
+	 * @param array $array
+	 * @param int   $extra // How many extra spaces to add at the end
+	 * @param int   $indent
+	 *
+	 * @return array
+	 */
+	protected function padArray($array, $extra = 2, $indent = 0)
+	{
+		$max = max(array_map('strlen', $array)) + $extra + $indent;
+
+		foreach ($array as &$item)
+		{
+			$item = str_repeat(' ', $indent) . $item;
+			$item = str_pad($item, $max);
+		}
+
+		return $array;
+	}
+
+	//--------------------------------------------------------------------
 }

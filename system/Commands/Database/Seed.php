@@ -7,7 +7,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,17 +29,15 @@
  *
  * @package	CodeIgniter
  * @author	CodeIgniter Dev Team
- * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
  * @filesource
  */
-
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use CodeIgniter\Database\Seeder;
-use Config\Services;
 
 /**
  * Runs the specified Seeder file to populate the database
@@ -49,50 +47,82 @@ use Config\Services;
  */
 class Seed extends BaseCommand
 {
-    protected $group = 'Database';
 
-    /**
-     * The Command's name
-     *
-     * @var string
-     */
-    protected $name = 'db:seed';
+	/**
+	 * The group the command is lumped under
+	 * when listing commands.
+	 *
+	 * @var string
+	 */
+	protected $group = 'Database';
 
-    /**
-     * the Command's short description
-     *
-     * @var string
-     */
-    protected $description = 'Runs the specified seeder to populate known data into the database.';
+	/**
+	 * The Command's name
+	 *
+	 * @var string
+	 */
+	protected $name = 'db:seed';
 
-    /**
-     * Runs all of the migrations in reverse order, until they have
-     * all been un-applied.
-     */
-    public function run(array $params=[])
-    {
-        $seeder = new Seeder(new \Config\Database());
+	/**
+	 * the Command's short description
+	 *
+	 * @var string
+	 */
+	protected $description = 'Runs the specified seeder to populate known data into the database.';
 
-        $seedName = array_shift($params);
+	/**
+	 * the Command's usage
+	 *
+	 * @var string
+	 */
+	protected $usage = 'db:seed [seeder_name]';
 
-        if (empty($seedName))
-        {
-            $seedName = CLI::prompt(lang('Migrations.migSeeder'), 'DatabaseSeeder');
-        }
+	/**
+	 * the Command's Arguments
+	 *
+	 * @var array
+	 */
+	protected $arguments = array(
+		'seeder_name' => 'The seeder name to run'
+	);
 
-        if (empty($seedName))
-        {
-            CLI::error(lang('Migrations.migMissingSeeder'));
-            return;
-        }
+	/**
+	 * the Command's Options
+	 *
+	 * @var array
+	 */
+	protected $options = [];
 
-        try
-        {
-            $seeder->call($seedName);
-        }
-        catch (\Exception $e)
-        {
-            $this->showError($e);
-        }
-    }
+	/**
+	 * Runs all of the migrations in reverse order, until they have
+	 * all been un-applied.
+	 *
+	 * @param array $params
+	 */
+	public function run(array $params = [])
+	{
+		$seeder = new Seeder(new \Config\Database());
+
+		$seedName = array_shift($params);
+
+		if (empty($seedName))
+		{
+			$seedName = CLI::prompt(lang('Migrations.migSeeder'), 'DatabaseSeeder');
+		}
+
+		if (empty($seedName))
+		{
+			CLI::error(lang('Migrations.migMissingSeeder'));
+			return;
+		}
+
+		try
+		{
+			$seeder->call($seedName);
+		} catch (\Exception $e)
+		{
+			$this->showError($e);
+		}
+	}
+
 }

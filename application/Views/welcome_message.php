@@ -25,6 +25,7 @@
 				color: #222;
 			}
 			.wrap {
+				max-width: 1024px;
 				margin: 5rem auto;
 				padding: 2rem;
 				background: #fff;

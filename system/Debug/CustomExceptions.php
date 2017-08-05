@@ -1,6 +1,4 @@
-<?php
-
-namespace CodeIgniter;
+<?php namespace CodeIgniter;
 
 /**
  * CodeIgniter
@@ -9,7 +7,7 @@ namespace CodeIgniter;
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
+ * Copyright (c) 2014-2017 British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +29,7 @@ namespace CodeIgniter;
  *
  * @package	CodeIgniter
  * @author	CodeIgniter Dev Team
- * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	2014-2017 British Columbia Institute of Technology (https://bcit.ca/)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 3.0.0
@@ -44,9 +42,9 @@ namespace CodeIgniter;
  * experience across the application. The default error codes are already set,
  * and will be used to provide both HTTP status codes and CLI exit codes.
  *
- * The Error Exceptions below are primarily to provide a way to have 
+ * The Error Exceptions below are primarily to provide a way to have
  * information logged automatically by the application's log system.
- * 
+ *
  * @package CodeIgniter
  */
 
@@ -90,7 +88,7 @@ class PageNotFoundException extends \OutOfBoundsException
 
 	/**
 	 * Error code
-	 * @var int 
+	 * @var int
 	 */
 	protected $code = 404;
 
@@ -104,7 +102,7 @@ class ConfigException extends CriticalError
 
 	/**
 	 * Error code
-	 * @var int 
+	 * @var int
 	 */
 	protected $code = 3;
 
@@ -118,7 +116,7 @@ class UnknownFileException extends CriticalError
 
 	/**
 	 * Error code
-	 * @var int 
+	 * @var int
 	 */
 	protected $code = 4;
 
@@ -132,7 +130,7 @@ class UnknownClassException extends CriticalError
 
 	/**
 	 * Error code
-	 * @var int 
+	 * @var int
 	 */
 	protected $code = 5;
 
@@ -146,7 +144,7 @@ class UnknownMethodException extends CriticalError
 
 	/**
 	 * Error code
-	 * @var int 
+	 * @var int
 	 */
 	protected $code = 6;
 
@@ -160,7 +158,7 @@ class UserInputException extends \OutOfBoundsException
 
 	/**
 	 * Error code
-	 * @var int 
+	 * @var int
 	 */
 	protected $code = 7;
 
@@ -174,7 +172,7 @@ class DatabaseException extends Error
 
 	/**
 	 * Error code
-	 * @var int 
+	 * @var int
 	 */
 	protected $code = 8;
 
