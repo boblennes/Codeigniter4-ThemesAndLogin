@@ -29,7 +29,7 @@ class Application extends \CodeIgniter\Controller
 		{
 	       $config = array(
             'type' => 'mysql',
-            'username' => 'gk-user',
+            'username' => 'gkuser',
             'password' => 'gate123',
             'name' => 'gatekeeper',
             'host' => 'localhost'

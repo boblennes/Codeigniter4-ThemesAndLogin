@@ -13,7 +13,7 @@ class App extends BaseConfig
 		'menudata' => array (
 			array ('name' => '<span class="glyphicon glyphicon-home"></span>', 'link' => '/'),
 			array ('name' => 'Documentation', 'link' => 'https://www.codeigniter.com/user_guide'),
-			array ('name' => 'Login', 'link' => 'secure')
+			array ('name' => 'Login', 'link' => 'index.php/secure')
 		)
 	);
 	public $stableVersion = '1.0';
