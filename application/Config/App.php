@@ -13,7 +13,7 @@ class App extends BaseConfig
 		'menudata' => array (
 			array ('name' => '<span class="glyphicon glyphicon-home"></span>', 'link' => '/'),
 			array ('name' => 'Documentation', 'link' => 'https://www.codeigniter.com/user_guide'),
-			array ('name' => 'Login', 'link' => '/ci4gate/public/index.php/secure')
+			array ('name' => 'Login', 'link' => 'secure')
 		)
 	);
 	public $stableVersion = '1.0';
@@ -34,7 +34,8 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = 'http://localhost/ci4gate/public/';
+	/* intelligent base URL */
+	public $baseURL = '';
 
 	/*
 	|--------------------------------------------------------------------------

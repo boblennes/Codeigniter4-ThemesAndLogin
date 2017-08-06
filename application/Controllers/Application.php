@@ -22,14 +22,14 @@ class Application extends \CodeIgniter\Controller
 		$this->viewsDir = __DIR__.'/Views';
 		$this->config = new \Config\App();
 		$this->data	= array ();
-		$this->data['title'] = 'CodeIgniter 4 Demo';
+		$this->data['title'] = 'CodeIgniter 4 Demo with Secure Area';
 		$this->errors = array ();
 
 		if ($this->isSecure)
 		{
 	       $config = array(
             'type' => 'mysql',
-            'username' => 'gk_user',
+            'username' => 'gk-user',
             'password' => 'gate123',
             'name' => 'gatekeeper',
             'host' => 'localhost'
