@@ -12,6 +12,4 @@ return array(
     'Psecio' => array($vendorDir . '/psecio/gatekeeper/src'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Modler' => array($vendorDir . '/enygma/modler/src'),
-    'Guzzle\\Tests' => array($vendorDir . '/guzzle/guzzle/tests'),
-    'Guzzle' => array($vendorDir . '/guzzle/guzzle/src'),
 );
