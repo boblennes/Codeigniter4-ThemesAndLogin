@@ -12,8 +12,8 @@ The exciting part of this is that PSR4 works great in Codeigniter4.
 
 To run the login portion of this repository, you will need to do the following setup:
 
-1) In mySQL, create database 'gatekeeper' and user 'gk-user' with password 'gate123' or other of your liking (just put it in App.php if other)
+1) In mySQL, create database 'gatekeeper' and user 'gkuser' with password 'gate123' or other of your liking (just put it in App.php if other)
 
-2) Execute the vendor/bin/setup.sh file. This script will ask several questions about your database setup, write the needed files and run the migrations for you.
+2) Execute the vendor/bin/setup.sh file from the project root. This script will ask several questions about your database setup, write the needed files and run the migrations for you.
 
 3) edit the connection and paths in application/config/App.php lines 16 and 37 to change the path to correspond to your setup (if needed)

@@ -12,7 +12,7 @@
     <div class="login-box-body">
         <p class="login-box-msg">Please Sign In</p>
         <?php if (isset($msg)) echo '<div class="text-danger">'.$msg.'</div>'; ?>
-        <form action="<?php echo base_url(); //base_url($secarea); ?>index.php/secure" method="post" accept-charset="utf-8">
+        <form action="../index.php/secure" method="post" accept-charset="utf-8">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" name="username" value="demo" id="username" class="form-control" />
