@@ -10,6 +10,7 @@
 
 namespace SebastianBergmann\Diff;
 
+use SebastianBergmann\Diff\InvalidArgumentException;
 use SebastianBergmann\Diff\Output\DiffOutputBuilderInterface;
 use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 
@@ -60,8 +61,8 @@ final class Differ
      */
     public function diff($from, $to, LongestCommonSubsequenceCalculator $lcs = null): string
     {
-        $from = $this->validateDiffInput($from);
-        $to   = $this->validateDiffInput($to);
+        $from = $this->normalizeDiffInput($from);
+        $to   = $this->normalizeDiffInput($to);
         $diff = $this->diffToArray($from, $to, $lcs);
 
         return $this->outputBuilder->getDiff($diff);
@@ -72,9 +73,9 @@ final class Differ
      *
      * @param mixed $input
      *
-     * @return string
+     * @return string|array
      */
-    private function validateDiffInput($input): string
+    private function normalizeDiffInput($input)
     {
         if (!\is_array($input) && !\is_string($input)) {
             return (string) $input;
@@ -105,13 +106,13 @@ final class Differ
         if (\is_string($from)) {
             $from = $this->splitStringByLines($from);
         } elseif (!\is_array($from)) {
-            throw new \InvalidArgumentException('"from" must be an array or string.');
+            throw new InvalidArgumentException('"from" must be an array or string.');
         }
 
         if (\is_string($to)) {
             $to = $this->splitStringByLines($to);
         } elseif (!\is_array($to)) {
-            throw new \InvalidArgumentException('"to" must be an array or string.');
+            throw new InvalidArgumentException('"to" must be an array or string.');
         }
 
         list($from, $to, $start, $end) = self::getArrayDiffParted($from, $to);

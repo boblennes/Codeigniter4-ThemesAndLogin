@@ -10,19 +10,17 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @covers PHP_Timer
+ */
 class PHP_TimerTest extends TestCase
 {
-    /**
-     * @covers PHP_Timer::start
-     * @covers PHP_Timer::stop
-     */
     public function testStartStop()
     {
         $this->assertInternalType('float', PHP_Timer::stop());
     }
 
     /**
-     * @covers       PHP_Timer::secondsToTimeString
      * @dataProvider secondsProvider
      */
     public function testSecondsToTimeString($string, $seconds)
@@ -33,9 +31,6 @@ class PHP_TimerTest extends TestCase
         );
     }
 
-    /**
-     * @covers PHP_Timer::timeSinceStartOfRequest
-     */
     public function testTimeSinceStartOfRequest()
     {
         $this->assertStringMatchesFormat(
@@ -44,10 +39,35 @@ class PHP_TimerTest extends TestCase
         );
     }
 
+    public function testTimeSinceStartOfRequest2()
+    {
+        if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+            unset($_SERVER['REQUEST_TIME_FLOAT']);
+        }
+
+        $this->assertStringMatchesFormat(
+            '%f %s',
+            PHP_Timer::timeSinceStartOfRequest()
+        );
+    }
 
     /**
-     * @covers PHP_Timer::resourceUsage
+     * @backupGlobals     enabled
+     * @expectedException RuntimeException
      */
+    public function testTimeSinceStartOfRequest3()
+    {
+        if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+            unset($_SERVER['REQUEST_TIME_FLOAT']);
+        }
+
+        if (isset($_SERVER['REQUEST_TIME'])) {
+            unset($_SERVER['REQUEST_TIME']);
+        }
+
+        PHP_Timer::timeSinceStartOfRequest();
+    }
+
     public function testResourceUsage()
     {
         $this->assertStringMatchesFormat(

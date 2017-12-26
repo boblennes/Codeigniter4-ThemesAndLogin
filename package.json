@@ -1,0 +1,11 @@
+{
+  "name": "Codeigniter4-ThemesAndLogin",
+  "version": "1.0.0",
+  "main": "index.php",
+  "repository": "https://github.com/boblennes/Codeigniter4-ThemesAndLogin.git",
+  "author": "Bob Lennes <boblennes@msn.com>",
+  "license": "MIT",
+  "dependencies": {
+    "admin-lte": "^2.4.2"
+  }
+}

@@ -2,9 +2,10 @@
 
 namespace Tests\Prophecy\Doubler\Generator;
 
+use PHPUnit\Framework\TestCase;
 use Prophecy\Doubler\Generator\ClassMirror;
 
-class ClassMirrorTest extends \PHPUnit_Framework_TestCase
+class ClassMirrorTest extends TestCase
 {
     /**
      * @test
@@ -218,14 +219,13 @@ class ClassMirrorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException Prophecy\Exception\Doubler\ClassMirrorException
      */
     public function it_throws_an_exception_if_class_is_final()
     {
         $class = new \ReflectionClass('Fixtures\Prophecy\FinalClass');
 
         $mirror = new ClassMirror();
-
-        $this->setExpectedException('Prophecy\Exception\Doubler\ClassMirrorException');
 
         $mirror->reflect($class, array());
     }
@@ -261,14 +261,13 @@ class ClassMirrorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException Prophecy\Exception\InvalidArgumentException
      */
     public function it_throws_an_exception_if_interface_provided_instead_of_class()
     {
         $class = new \ReflectionClass('Fixtures\Prophecy\EmptyInterface');
 
         $mirror = new ClassMirror();
-
-        $this->setExpectedException('Prophecy\Exception\InvalidArgumentException');
 
         $mirror->reflect($class, array());
     }
@@ -353,6 +352,7 @@ class ClassMirrorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException InvalidArgumentException
      */
     public function it_throws_an_exception_if_class_provided_in_interfaces_list()
     {
@@ -360,19 +360,16 @@ class ClassMirrorTest extends \PHPUnit_Framework_TestCase
 
         $mirror = new ClassMirror();
 
-        $this->setExpectedException('InvalidArgumentException');
-
         $mirror->reflect(null, array($class));
     }
 
     /**
      * @test
+     * @expectedException InvalidArgumentException
      */
     public function it_throws_an_exception_if_not_reflection_provided_as_interface()
     {
         $mirror = new ClassMirror();
-
-        $this->setExpectedException('InvalidArgumentException');
 
         $mirror->reflect(null, array(null));
     }

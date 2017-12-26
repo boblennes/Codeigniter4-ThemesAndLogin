@@ -1,8 +1,8 @@
 {
-	"description": "The CodeIgniter framework v4",
-	"name": "codeigniter4/framework",
+    "name": "bobl/codeigniter4_themesandlogin",
+    "description": "Starter POC for Codeigniter4 using themes and gATEKEEPER",
 	"type": "project",
-	"homepage": "https://codeigniter.com",
+		"homepage": "https://codeigniter.com",
 	"license": "MIT",
 	"support": {
 		"forum": "http://forum.codeigniter.com/",
@@ -10,19 +10,28 @@
 		"slack": "https://codeigniterchat.slack.com",
 		"source": "https://github.com/bcit-ci/CodeIgniter4"
 	},
+    "authors": [
+        {
+            "name": "Bob Lennes",
+            "email": "boblennes@msn.com"
+        }
+	],
 	"autoload": {
 		"psr-4": {
-			"CodeIgniter\\": "system/"
-		}
+          "CodeIgniter\\": "./Vendor/codeigniter4/system/",
+          "Config\\": "./src/Application/Config/"
+ 		}
 	},
 	"require": {
-		"php": ">=7.0",
-		"roave/security-advisories": "dev-master",
+		"php": ">=7.1",
+        "codeigniter4/framework": "dev-master",
+    	"roave/security-advisories": "dev-master",
 		"zendframework/zend-escaper": "^2.5",
 		"paragonie/sodium_compat": "^1.1",
 		"kint-php/kint": "^2.1",
 		"psecio/gatekeeper": "^2.10"
-	},
+    }
+    ,
 	"require-dev": {
 		"phpunit/phpunit": "^6.0",
 		"mikey179/vfsStream": "1.6.*"
@@ -32,5 +41,6 @@
 			"composer dump-autoload",
 			"CodeIgniter\\ComposerScripts::postUpdate"
 		]
-	}
+	},
+    "minimum-stability": "dev"
 }
